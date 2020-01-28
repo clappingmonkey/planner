@@ -25,11 +25,11 @@ msgstr ""
 
 #: src/Utils.vala:62 src/Utils.vala:69 src/Widgets/LabelRow.vala:27
 msgid "Home"
-msgstr ""
+msgstr "Вкъщи"
 
 #: src/Utils.vala:63 src/Utils.vala:73
 msgid "Office"
-msgstr ""
+msgstr "Офис"
 
 #: src/Utils.vala:64 src/Utils.vala:77
 msgid "Errand"
