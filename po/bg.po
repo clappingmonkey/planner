@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: com.github.alainm23.planner\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-12 11:55-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2020-02-17 14:17+0300\n"
 "Last-Translator: clappignmonkey <clappignmonkey33@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: Bulgarian\n"
@@ -39,11 +39,11 @@ msgstr ""
 
 #: src/Utils.vala:103 src/Utils.vala:119
 msgid "Important"
-msgstr ""
+msgstr "Важно"
 
 #: src/Utils.vala:104 src/Utils.vala:123
 msgid "Pending"
-msgstr ""
+msgstr "Чакащо"
 
 #: src/Utils.vala:166
 msgid "Berry Red"
@@ -51,19 +51,19 @@ msgstr ""
 
 #: src/Utils.vala:167
 msgid "Red"
-msgstr ""
+msgstr "Червено"
 
 #: src/Utils.vala:168
 msgid "Orange"
-msgstr ""
+msgstr "Оранжево"
 
 #: src/Utils.vala:169
 msgid "Yellow"
-msgstr ""
+msgstr "Жълто"
 
 #: src/Utils.vala:170
 msgid "Olive Green"
-msgstr ""
+msgstr "Маслиново Зелено"
 
 #: src/Utils.vala:171
 msgid "Lime Green"
@@ -71,11 +71,11 @@ msgstr ""
 
 #: src/Utils.vala:172
 msgid "Green"
-msgstr ""
+msgstr "Зелено"
 
 #: src/Utils.vala:173
 msgid "Mint Green"
-msgstr ""
+msgstr "Ментово Зелено"
 
 #: src/Utils.vala:174
 msgid "Teal"
@@ -83,43 +83,43 @@ msgstr ""
 
 #: src/Utils.vala:175
 msgid "Sky Blue"
-msgstr ""
+msgstr "Небесно Синьо"
 
 #: src/Utils.vala:176
 msgid "Light Blue"
-msgstr ""
+msgstr "Светло Синьо"
 
 #: src/Utils.vala:177
 msgid "Blue"
-msgstr ""
+msgstr "Синьо"
 
 #: src/Utils.vala:178
 msgid "Grape"
-msgstr ""
+msgstr "Грозде"
 
 #: src/Utils.vala:179
 msgid "Violet"
-msgstr ""
+msgstr "Виолетово"
 
 #: src/Utils.vala:180
 msgid "Lavander"
-msgstr ""
+msgstr "Лавандула"
 
 #: src/Utils.vala:181
 msgid "Magenta"
-msgstr ""
+msgstr "Магента"
 
 #: src/Utils.vala:182
 msgid "Salmon"
-msgstr ""
+msgstr "Сьомга"
 
 #: src/Utils.vala:183
 msgid "Charcoal"
-msgstr ""
+msgstr "Въглено"
 
 #: src/Utils.vala:184
 msgid "Grey"
-msgstr ""
+msgstr "Сиво"
 
 #: src/Utils.vala:185
 msgid "Taupe"
@@ -129,12 +129,12 @@ msgstr ""
 #: src/Widgets/DueButton.vala:148 src/Views/Today.vala:51
 #: src/Dialogs/Preferences.vala:234 src/Dialogs/Preferences.vala:341
 msgid "Today"
-msgstr ""
+msgstr "Днес"
 
 #: src/Utils.vala:515 src/Widgets/Pane.vala:348 src/Widgets/ItemRow.vala:1266
 #: src/Widgets/DueButton.vala:152 src/Widgets/UpcomingRow.vala:54
 msgid "Tomorrow"
-msgstr ""
+msgstr "Утре"
 
 #: src/Utils.vala:630
 msgid "Quick Add Activated!"
@@ -147,7 +147,7 @@ msgstr ""
 
 #: src/Utils.vala:648
 msgid "🚀️ Getting Started"
-msgstr ""
+msgstr "🚀️ "
 
 #: src/Utils.vala:649
 msgid ""
