@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Services.LabelsController : GLib.Object {
     construct {
         foreach (Objects.Label label in Planner.database.get_all_labels ()) {
@@ -6,13 +27,13 @@ public class Services.LabelsController : GLib.Object {
     }
 
     private void apply_styles (int64 id, string color) {
-        string COLOR_CSS = """
+        string color_css = """
             .label-preview-%s {
                 background-color: alpha (%s, 0.25);
                 color: @text_color;
                 padding : 0px 6px 1px 6px;
                 border-radius: 50px;
-                font-size: 9px;
+                font-size: 8px;
                 font-weight: 700;
                 border: 1px solid shade (%s, 0.95)
             }
@@ -29,7 +50,7 @@ public class Services.LabelsController : GLib.Object {
         var provider = new Gtk.CssProvider ();
 
         try {
-            var colored_css = COLOR_CSS.printf (
+            var colored_css = color_css.printf (
                 // Label preview
                 id.to_string (),
                 color,
@@ -41,10 +62,13 @@ public class Services.LabelsController : GLib.Object {
                 id.to_string (),
                 color
             );
-            
+
             provider.load_from_data (colored_css, colored_css.length);
 
-            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+            Gtk.StyleContext.add_provider_for_screen (
+                Gdk.Screen.get_default (), provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            );
         } catch (GLib.Error e) {
             return;
         }

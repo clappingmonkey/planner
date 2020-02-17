@@ -4,7 +4,7 @@
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
 * License as published by the Free Software Foundation; either
-* version 2 of the License, or (at your option) any later version.
+* version 3 of the License, or (at your option) any later version.
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
 *
-* Authored by: Alain M. <alain23@protonmail.com>
+* Authored by: Alain M. <alainmh23@gmail.com>
 */
 
 public class Widgets.Calendar.CalendarHeader : Gtk.Box {
@@ -54,7 +54,7 @@ public class Widgets.Calendar.CalendarHeader : Gtk.Box {
         right_button.get_style_context ().add_class ("flat");
         right_button.get_style_context ().add_class ("no-padding-right");
         right_button.can_focus = false;
-        
+
         pack_start (date_label, false, false, 0);
         pack_end (right_button, false, false, 0);
         pack_end (center_button, false, false, 0);

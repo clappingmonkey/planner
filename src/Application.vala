@@ -1,10 +1,10 @@
- /*
+/*
 * Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
 * License as published by the Free Software Foundation; either
-* version 2 of the License, or (at your option) any later version.
+* version 3 of the License, or (at your option) any later version.
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
 *
-* Authored by: Alain M. <alain23@protonmail.com>
+* Authored by: Alain M. <alainmh23@gmail.com>
 */
 
 public class Planner : Gtk.Application {
@@ -28,7 +28,7 @@ public class Planner : Gtk.Application {
     public static Services.Todoist todoist;
     public static Services.Notifications notifications;
     public static Services.Calendar.CalendarModel calendar_model;
-    
+
     public signal void go_view (string type, int64 id, int64 id_2);
 
     private bool silence = false;
@@ -37,7 +37,7 @@ public class Planner : Gtk.Application {
         Object (
             application_id: "com.github.alainm23.planner",
             flags: ApplicationFlags.HANDLES_COMMAND_LINE
-        ); 
+        );
 
         // Init internationalization support
         Intl.setlocale (LocaleCategory.ALL, "");
@@ -45,12 +45,12 @@ public class Planner : Gtk.Application {
         Intl.bindtextdomain (Constants.GETTEXT_PACKAGE, langpack_dir);
         Intl.bind_textdomain_codeset (Constants.GETTEXT_PACKAGE, "UTF-8");
         Intl.textdomain (Constants.GETTEXT_PACKAGE);
-        
+
         // Dir to Database
         utils = new Utils ();
         utils.create_dir_with_parents ("/com.github.alainm23.planner");
         utils.create_dir_with_parents ("/com.github.alainm23.planner/avatars");
-        
+
         // Services
         settings = new Settings ("com.github.alainm23.planner");
         database = new Services.Database ();
@@ -76,11 +76,18 @@ public class Planner : Gtk.Application {
         if (get_windows ().length () > 0) {
             get_windows ().data.present ();
             get_windows ().data.show_all ();
+
+            int x, y;
+            settings.get ("window-position", "(ii)", out x, out y);
+            if (x != -1 || y != -1) {
+                get_windows ().data.move (x, y);
+            }
+
             return;
         }
 
         main_window = new MainWindow (this);
-        
+
         int window_x, window_y;
         var rect = Gtk.Allocation ();
 
@@ -92,11 +99,11 @@ public class Planner : Gtk.Application {
         }
 
         main_window.set_allocation (rect);
-        
+
         if (settings.get_boolean ("window-maximized")) {
             main_window.maximize ();
         }
-        
+
         if (silence == false) {
             main_window.show_all ();
             main_window.present ();
@@ -108,7 +115,10 @@ public class Planner : Gtk.Application {
         // Stylesheet
         var provider = new Gtk.CssProvider ();
         provider.load_from_resource ("/com/github/alainm23/planner/stylesheet.css");
-        Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        Gtk.StyleContext.add_provider_for_screen (
+            Gdk.Screen.get_default (),
+            provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        );
 
         // Default Icon Theme
         weak Gtk.IconTheme default_theme = Gtk.IconTheme.get_default ();
@@ -116,8 +126,16 @@ public class Planner : Gtk.Application {
 
         utils.apply_theme_changed ();
 
-        Gtk.Settings.get_default().set_property("gtk-icon-theme-name", "elementary");
-        Gtk.Settings.get_default().set_property("gtk-theme-name", "elementary");
+        Gtk.Settings.get_default ().set_property ("gtk-icon-theme-name", "elementary");
+        Gtk.Settings.get_default ().set_property ("gtk-theme-name", "elementary");
+
+        // Set shortcut
+        string quick_add_shortcut = settings.get_string ("quick-add-shortcut");
+        if (quick_add_shortcut == "") {
+            quick_add_shortcut = "<Primary>Tab";
+            settings.set_string ("quick-add-shortcut", quick_add_shortcut);
+        }
+        utils.set_quick_add_shortcut (quick_add_shortcut);
     }
 
     public override int command_line (ApplicationCommandLine command_line) {
@@ -130,7 +148,7 @@ public class Planner : Gtk.Application {
 
         string[] args = command_line.get_arguments ();
         string[] _args = new string[args.length];
-        for(int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
             _args[i] = args[i];
         }
 
@@ -140,7 +158,7 @@ public class Planner : Gtk.Application {
             ctx.add_main_entries (options, null);
             unowned string[] tmp = _args;
             ctx.parse (ref tmp);
-        } catch(OptionError e) {
+        } catch (OptionError e) {
             command_line.print ("error: %s\n", e.message);
             return 0;
         }
@@ -159,7 +177,7 @@ public class Planner : Gtk.Application {
                 main_window.destroy ();
             }
         });
-        
+
         var show_item = new SimpleAction ("show-item", VariantType.INT64);
         show_item.activate.connect ((parameter) => {
             //var item = Application.database.get_item_by_id (parameter.get_int64 ());
@@ -235,7 +253,7 @@ public class Planner : Gtk.Application {
         //      dialog.destroy.connect (Gtk.main_quit);
         //      dialog.show_all ();
         //  });
-        
+
         add_action (quit_action);
         add_action (show_item);
         add_action (quick_find_action);
@@ -250,7 +268,7 @@ public class Planner : Gtk.Application {
         add_action (view_upcoming);
         //add_action (open_settings);
     }
-    
+
     public static int main (string[] args) {
         Planner app = Planner.instance;
 

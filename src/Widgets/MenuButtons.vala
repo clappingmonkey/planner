@@ -1,7 +1,28 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.ModelButton : Gtk.Button {
     public bool arrow { get; construct; }
     private Gtk.Label item_label;
-    private Gtk.Image item_image;
+    public Gtk.Image item_image;
 
     public string icon {
         set {
@@ -58,6 +79,7 @@ public class Widgets.ModelButton : Gtk.Button {
         get_style_context ().remove_class ("button");
         get_style_context ().add_class ("flat");
         get_style_context ().add_class ("menuitem");
+        get_style_context ().add_class ("no-border");
         can_focus = false;
 
         item_image = new Gtk.Image ();
@@ -74,8 +96,8 @@ public class Widgets.ModelButton : Gtk.Button {
         arrow_image.get_style_context ().add_class ("dim-label");
         arrow_image.pixel_size = 16;
 
-        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-        box.margin_start = 6;
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
+        box.margin_start = 3;
         box.pack_start (item_image, false, false, 0);
         box.pack_start (item_label, false, true, 0);
         if (arrow) {
@@ -105,7 +127,7 @@ public class Widgets.ImageMenuItem : Gtk.MenuItem {
             item_label.label = value;
         }
     }
-    
+
     public int color {
         set {
             if (value == 0) {
@@ -171,7 +193,7 @@ public class Widgets.PopoverButton : Gtk.Button {
         var label = new Gtk.Label (text);
         label.halign = Gtk.Align.START;
         label.hexpand = true;
-        
+
         var grid = new Gtk.Grid ();
         grid.margin_start = 6;
 

@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.LabelButton : Gtk.ToggleButton {
     public int64 item_id { get; construct; }
 
@@ -30,7 +51,6 @@ public class Widgets.LabelButton : Gtk.ToggleButton {
         main_grid.halign = Gtk.Align.CENTER;
         main_grid.valign = Gtk.Align.CENTER;
         main_grid.add (label_icon);
-        //main_grid.add (label);
 
         add (main_grid);
 
@@ -147,7 +167,6 @@ public class Widgets.LabelPopoverRow : Gtk.ListBoxRow {
         label_image.get_style_context ().add_class ("label-%s".printf (label.id.to_string ()));
 
         var name_label = new Gtk.Label (label.name);
-        name_label.get_style_context ().add_class ("h3");
         name_label.get_style_context ().add_class ("font-weight-600");
         name_label.valign = Gtk.Align.CENTER;
         name_label.ellipsize = Pango.EllipsizeMode.END;

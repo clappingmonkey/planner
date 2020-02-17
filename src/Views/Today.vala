@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Views.Today : Gtk.EventBox {
     private Gtk.ListBox listbox;
     private Gtk.ListBox event_listbox;
@@ -16,7 +37,7 @@ public class Views.Today : Gtk.EventBox {
 
         var icon_image = new Gtk.Image ();
         icon_image.valign = Gtk.Align.CENTER;
-        icon_image.pixel_size = 19; 
+        icon_image.pixel_size = 19;
 
         var hour = new GLib.DateTime.now_local ().get_hour ();
         if (hour >= 18 || hour <= 6) {
@@ -32,7 +53,11 @@ public class Views.Today : Gtk.EventBox {
         //title_label.get_style_context ().add_class ("today");
         title_label.use_markup = true;
 
-        var date_label = new Gtk.Label (new GLib.DateTime.now_local ().format (Granite.DateTime.get_default_date_format (false, true, false)));
+        var date_label = new Gtk.Label (
+            new GLib.DateTime.now_local ().format (
+                Granite.DateTime.get_default_date_format (false, true, false)
+            )
+        );
         date_label.valign = Gtk.Align.CENTER;
         date_label.margin_top = 6;
         date_label.use_markup = true;
@@ -47,14 +72,15 @@ public class Views.Today : Gtk.EventBox {
         top_box.pack_start (title_label, false, false, 6);
         top_box.pack_start (date_label, false, false, 0);
 
-        listbox = new Gtk.ListBox  ();
+        listbox = new Gtk.ListBox ();
         listbox.valign = Gtk.Align.START;
         listbox.get_style_context ().add_class ("welcome");
         listbox.get_style_context ().add_class ("listbox");
         listbox.activate_on_single_click = true;
         listbox.selection_mode = Gtk.SelectionMode.SINGLE;
         listbox.hexpand = true;
-        
+        listbox.margin_top = 6;
+
         int is_todoist = 0;
         if (Planner.settings.get_boolean ("inbox-project-sync")) {
             is_todoist = 1;
@@ -62,7 +88,7 @@ public class Views.Today : Gtk.EventBox {
 
         new_item = new Widgets.NewItem (
             Planner.settings.get_int64 ("inbox-project"),
-            0, 
+            0,
             is_todoist
         );
         new_item.margin_top = 12;
@@ -100,9 +126,9 @@ public class Views.Today : Gtk.EventBox {
 
         add (main_scrolled);
         add_all_items ();
-        
+
         show_all ();
-        
+
         listbox.row_activated.connect ((row) => {
             var item = ((Widgets.ItemRow) row);
             item.reveal_child = true;
@@ -113,10 +139,10 @@ public class Views.Today : Gtk.EventBox {
             if (Planner.utils.is_today (datetime) || Planner.utils.is_before_today (datetime)) {
                 if (items_loaded.has_key (item.id.to_string ()) == false) {
                     var row = new Widgets.ItemRow (item);
-            
+
                     row.is_today = true;
                     items_loaded.set (item.id.to_string (), true);
-        
+
                     listbox.add (row);
                     listbox.show_all ();
                 }
@@ -166,7 +192,7 @@ public class Views.Today : Gtk.EventBox {
                         items_loaded.unset (item.id.to_string ());
                     }
                 }
-                
+
                 return false;
             });
         });
@@ -248,7 +274,7 @@ public class Views.Today : Gtk.EventBox {
 
     private void add_item (Objects.Item item) {
         var row = new Widgets.ItemRow (item);
-            
+
         row.is_today = true;
         items_loaded.set (item.id.to_string (), true);
 
@@ -259,7 +285,7 @@ public class Views.Today : Gtk.EventBox {
     private void add_all_items () {
         foreach (var item in Planner.database.get_all_today_items ()) {
             var row = new Widgets.ItemRow (item);
-            
+
             row.is_today = true;
             items_loaded.set (item.id.to_string (), true);
 
@@ -267,14 +293,14 @@ public class Views.Today : Gtk.EventBox {
             listbox.show_all ();
         }
 
-        listbox.set_sort_func (sort_function);
-        listbox.set_header_func (update_headers);
+        //listbox.set_sort_func (sort_function);
+        //listbox.set_header_func (update_headers);
     }
 
     private int sort_function (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
         var i1 = ((Widgets.ItemRow) row1).item;
         var i2 = ((Widgets.ItemRow) row2).item;
-        
+
         if (i1.project_id < i2.project_id) {
             return -1;
         } else {
@@ -299,7 +325,7 @@ public class Views.Today : Gtk.EventBox {
 
         return 0;
     }
-    
+
     private void update_headers (Gtk.ListBoxRow row, Gtk.ListBoxRow? before) {
         var item = ((Widgets.ItemRow) row).item;
         if (before != null) {
@@ -321,7 +347,7 @@ public class Views.Today : Gtk.EventBox {
     private Gtk.Widget get_header_project (int64 id) {
         var project = Planner.database.get_project_by_id (id);
 
-        var name_label =  new Gtk.Label (project.name);
+        var name_label = new Gtk.Label (project.name);
         name_label.halign = Gtk.Align.START;
         name_label.get_style_context ().add_class ("header-title");
         name_label.valign = Gtk.Align.CENTER;
@@ -352,4 +378,4 @@ public class Views.Today : Gtk.EventBox {
             new_item.entry_grab_focus ();
         }
     }
-} 
+}

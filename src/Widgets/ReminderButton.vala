@@ -1,9 +1,30 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.ReminderButton : Gtk.ToggleButton {
     public Objects.Item item { get; construct; }
 
     private Gtk.Popover popover = null;
     private Gtk.Stack stack;
-    private Gtk.Label reminder_label; 
+    private Gtk.Label reminder_label;
     private Gtk.Revealer label_revealer;
     private Widgets.Calendar.Calendar calendar;
     private Granite.Widgets.TimePicker time_picker;
@@ -37,7 +58,7 @@ public class Widgets.ReminderButton : Gtk.ToggleButton {
         label_revealer = new Gtk.Revealer ();
         label_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT;
         label_revealer.add (reminder_label);
-        
+
         var main_grid = new Gtk.Grid ();
         main_grid.halign = Gtk.Align.CENTER;
         main_grid.valign = Gtk.Align.CENTER;
@@ -51,7 +72,7 @@ public class Widgets.ReminderButton : Gtk.ToggleButton {
         Planner.utils.clock_format_changed.connect (() => {
             check_reminder_label (first_reminder);
         });
-        
+
         this.toggled.connect (() => {
             if (this.active) {
                 if (popover == null) {
@@ -90,7 +111,7 @@ public class Widgets.ReminderButton : Gtk.ToggleButton {
         stack = new Gtk.Stack ();
         stack.expand = true;
         stack.transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT;
-        
+
         stack.add_named (get_reminders_widget (), "list");
         stack.add_named (get_reminder_new_widget (), "new");
 
@@ -169,7 +190,7 @@ public class Widgets.ReminderButton : Gtk.ToggleButton {
     }
 
     private Gtk.Widget get_reminder_new_widget () {
-        calendar = new Widgets.Calendar.Calendar (true);
+        calendar = new Widgets.Calendar.Calendar ();
         calendar.margin_bottom = 0;
         calendar.margin_top = 0;
         calendar.margin_end = 9;
@@ -183,7 +204,7 @@ public class Widgets.ReminderButton : Gtk.ToggleButton {
         time_picker.margin_end = 9;
 
         var cancel_button = new Gtk.Button.with_label (_("Cancel"));
-        
+
         var add_button = new Gtk.Button.with_label (_("Add"));
         add_button.sensitive = false;
         add_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);

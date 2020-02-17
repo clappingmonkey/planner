@@ -1,14 +1,35 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.MagicButton : Gtk.Revealer {
     public Gtk.Button magic_button;
 
     public signal void clicked ();
 
-    private const Gtk.TargetEntry[] targetEntries = {
+    private const Gtk.TargetEntry[] TARGET_ENTRIES = {
         {"MAGICBUTTON", Gtk.TargetFlags.SAME_APP, 0}
     };
- 
+
     construct {
-        tooltip_text = _("Add task");
+        tooltip_markup = Granite.markup_accel_tooltip ({"<Ctrl>N"}, _("Add Task"));
         transition_type = Gtk.RevealerTransitionType.CROSSFADE;
         reveal_child = true;
         margin = 16;
@@ -20,7 +41,8 @@ public class Widgets.MagicButton : Gtk.Revealer {
         magic_button.width_request = 32;
         magic_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
         magic_button.get_style_context ().add_class ("magic-button");
-        
+        magic_button.get_style_context ().add_class ("magic-button-animation");
+
         add (magic_button);
 
         build_drag_and_drop ();
@@ -31,7 +53,7 @@ public class Widgets.MagicButton : Gtk.Revealer {
     }
 
     private void build_drag_and_drop () {
-        Gtk.drag_source_set (magic_button, Gdk.ModifierType.BUTTON1_MASK, targetEntries, Gdk.DragAction.MOVE);
+        Gtk.drag_source_set (magic_button, Gdk.ModifierType.BUTTON1_MASK, TARGET_ENTRIES, Gdk.DragAction.MOVE);
         magic_button.drag_data_get.connect (on_drag_data_get);
         magic_button.drag_begin.connect (on_drag_begin);
         magic_button.drag_end.connect (on_drag_end);
@@ -54,7 +76,7 @@ public class Widgets.MagicButton : Gtk.Revealer {
         cr.line_to (0, alloc.height);
         cr.line_to (0, 0);
         cr.stroke ();
-  
+
         cr.set_source_rgba (255, 255, 255, 0);
         cr.rectangle (0, 0, alloc.width, alloc.height);
         cr.fill ();
@@ -67,7 +89,8 @@ public class Widgets.MagicButton : Gtk.Revealer {
         Planner.utils.drag_magic_button_activated (true);
     }
 
-    private void on_drag_data_get (Gtk.Widget widget, Gdk.DragContext context, Gtk.SelectionData selection_data, uint target_type, uint time) {
+    private void on_drag_data_get (Gtk.Widget widget, Gdk.DragContext context,
+        Gtk.SelectionData selection_data, uint target_type, uint time) {
         uchar[] data = new uchar[(sizeof (Gtk.Button))];
         ((Gtk.Widget[])data)[0] = widget;
 

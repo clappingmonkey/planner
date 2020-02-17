@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.QuickFind : Gtk.Revealer {
     private Gtk.SearchEntry search_entry;
     private Gtk.ListBox listbox;
@@ -58,7 +79,7 @@ public class Widgets.QuickFind : Gtk.Revealer {
         box.pack_start (top_box, false, false, 0);
         //box.pack_start (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), false, true, 0);
         box.pack_start (listbox_scrolled, false, false, 0);
-        
+
         var eventbox = new Gtk.EventBox ();
         eventbox.add (box);
 
@@ -79,7 +100,7 @@ public class Widgets.QuickFind : Gtk.Revealer {
                         item.id,
                         item.project_id
                     );
-                    
+
                     listbox.add (row);
                     listbox.show_all ();
                 }
@@ -91,7 +112,7 @@ public class Widgets.QuickFind : Gtk.Revealer {
                         "project",
                         project.id
                     );
-                    
+
                     listbox.add (row);
                     listbox.show_all ();
                 }
@@ -207,7 +228,7 @@ public class Widgets.SearchItem : Gtk.ListBoxRow {
     construct {
         margin_start = margin_end = 6;
         get_style_context ().add_class ("pane-row");
-        
+
         var image = new Gtk.Image ();
         image.gicon = new ThemedIcon (icon);
         image.pixel_size = 16;

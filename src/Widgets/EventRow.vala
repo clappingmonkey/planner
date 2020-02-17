@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.EventRow : Gtk.ListBoxRow {
     public GLib.DateTime date { get; construct; }
     public unowned ICal.Component component { get; construct; }
@@ -8,7 +29,7 @@ public class Widgets.EventRow : Gtk.ListBoxRow {
     public GLib.DateTime? end_time { get; private set; }
     public bool is_allday { get; private set; default = false; }
 
-    private Gtk.Revealer  main_revealer;
+    private Gtk.Revealer main_revealer;
 
     private Gtk.Grid color_grid;
     private Gtk.Label time_label;
@@ -72,8 +93,8 @@ public class Widgets.EventRow : Gtk.ListBoxRow {
         add (main_revealer);
 
         set_color ();
-        cal.notify["color"].connect (set_color);
-        
+        //cal.notify["color"].connect (set_color);
+
         update_timelabel ();
         check_visible ();
 
@@ -95,33 +116,40 @@ public class Widgets.EventRow : Gtk.ListBoxRow {
 
         main_revealer.reveal_child = _visible;
     }
-    
+
     private void update_timelabel () {
         var time_format = Granite.DateTime.get_default_time_format (true, false);
-        time_label.label = "<small>%s – %s</small>".printf (start_time.format (time_format), end_time.format (time_format));
+        time_label.label = "<small>%s – %s</small>".printf (
+            start_time.format (time_format), end_time.format (time_format)
+        );
     }
-    
+
     private void set_color () {
         var color = cal.dup_color ();
 
-        string COLOR_CSS = """
+        print ("Color: %s".printf (color));
+
+        string color_css = """
             .event-%s {
                 background-color: %s;
-                border-radius: 4px; 
+                border-radius: 4px;
             }
         """;
 
         var provider = new Gtk.CssProvider ();
 
         try {
-            var colored_css = COLOR_CSS.printf (
+            var colored_css = color_css.printf (
                 component.get_uid (),
                 color
             );
-            
+
             provider.load_from_data (colored_css, colored_css.length);
 
-            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+            Gtk.StyleContext.add_provider_for_screen (
+                Gdk.Screen.get_default (), provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            );
         } catch (GLib.Error e) {
             return;
         }

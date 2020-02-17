@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.UpcomingRow : Gtk.ListBoxRow {
     public GLib.DateTime date { get; construct; }
 
@@ -18,10 +39,10 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
     construct {
         can_focus = false;
         get_style_context ().add_class ("area-row");
-        
+
         items_loaded = new Gee.HashMap<string, bool> ();
 
-        var day_label =  new Gtk.Label (date.format ("%d"));
+        var day_label = new Gtk.Label (date.format ("%d"));
         day_label.halign = Gtk.Align.START;
         day_label.get_style_context ().add_class ("h2");
         day_label.get_style_context ().add_class ("font-bold");
@@ -68,13 +89,12 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
         var motion_grid = new Gtk.Grid ();
         motion_grid.get_style_context ().add_class ("grid-motion");
         motion_grid.height_request = 24;
-            
+
         motion_revealer = new Gtk.Revealer ();
         motion_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN;
         motion_revealer.add (motion_grid);
 
-        listbox = new Gtk.ListBox  ();
-        listbox.margin_bottom = 32;
+        listbox = new Gtk.ListBox ();
         listbox.valign = Gtk.Align.START;
         listbox.get_style_context ().add_class ("listbox");
         listbox.activate_on_single_click = true;
@@ -84,7 +104,7 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
         event_listbox = new Gtk.ListBox ();
         event_listbox.margin_bottom = 3;
         event_listbox.valign = Gtk.Align.START;
-        event_listbox.get_style_context ().add_class ("welcome");
+        //event_listbox.get_style_context ().add_class ("welcome");
         event_listbox.get_style_context ().add_class ("listbox");
         event_listbox.activate_on_single_click = true;
         event_listbox.selection_mode = Gtk.SelectionMode.SINGLE;
@@ -117,7 +137,7 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
             var datetime = new GLib.DateTime.from_iso8601 (item.due_date, new GLib.TimeZone.local ());
             if (Granite.DateTime.is_same_day (datetime, date)) {
                 if (items_loaded.has_key (item.id.to_string ()) == false) {
-                    add_item (item);  
+                    add_item (item);
                 }
             }
         });
@@ -134,16 +154,16 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
             if (Granite.DateTime.is_same_day (datetime, date)) {
                 if (items_loaded.has_key (item.id.to_string ()) == false) {
                     var row = new Widgets.ItemRow (item);
-            
+
                     row.upcoming = date;
                     items_loaded.set (item.id.to_string (), true);
 
                     Timeout.add (1000, () => {
                         listbox.add (row);
                         listbox.show_all ();
-            
+
                         return false;
-                    }); 
+                    });
                 }
             } else {
                 if (items_loaded.has_key (item.id.to_string ())) {
@@ -166,7 +186,7 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
                         items_loaded.unset (item.id.to_string ());
                     }
                 }
-                
+
                 return false;
             });
         });
@@ -257,10 +277,10 @@ public class Widgets.UpcomingRow : Gtk.ListBoxRow {
 
         return 0;
     }
-    
+
     private void add_item (Objects.Item item) {
         var row = new Widgets.ItemRow (item);
-            
+
         row.upcoming = date;
         items_loaded.set (item.id.to_string (), true);
 

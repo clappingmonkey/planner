@@ -1,10 +1,29 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.CheckRow : Gtk.ListBoxRow {
     public Objects.Item item { get; construct; }
 
     private Gtk.CheckButton checked_button;
     private Gtk.Entry content_entry;
-
-    private uint checked_timeout = 0;
 
     public signal void hide_item ();
 
@@ -102,7 +121,7 @@ public class Widgets.CheckRow : Gtk.ListBoxRow {
 
         content_entry.changed.connect (() => {
             save ();
-        }); 
+        });
 
         content_entry.key_release_event.connect ((key) => {
             if (key.keyval == 65307) {
@@ -149,7 +168,12 @@ public class Widgets.CheckRow : Gtk.ListBoxRow {
 
         Planner.database.item_deleted.connect ((i) => {
             if (item.id == i.id) {
-                destroy ();
+                main_revealer.reveal_child = false;
+
+                Timeout.add (500, () => {
+                    destroy ();
+                    return false;
+                });
             }
         });
 
@@ -187,7 +211,6 @@ public class Widgets.CheckRow : Gtk.ListBoxRow {
     private void save () {
         item.content = content_entry.text;
         tooltip_text = item.content;
-        
         item.save ();
     }
 }

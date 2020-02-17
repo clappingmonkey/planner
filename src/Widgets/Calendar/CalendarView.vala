@@ -4,7 +4,7 @@
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
 * License as published by the Free Software Foundation; either
-* version 2 of the License, or (at your option) any later version.
+* version 3 of the License, or (at your option) any later version.
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
 *
-* Authored by: Alain M. <alain23@protonmail.com>
+* Authored by: Alain M. <alainmh23@gmail.com>
 */
 
 public class Widgets.Calendar.CalendarView : Gtk.Box {
@@ -55,11 +55,11 @@ public class Widgets.Calendar.CalendarView : Gtk.Box {
         pack_end (days_grid);
     }
 
-    public void fill_grid_days (int start_day, 
-                                int max_day, 
+    public void fill_grid_days (int start_day,
+                                int max_day,
                                 int current_day,
-                                bool is_current_month, 
-                                bool sensitive_past_days = false,
+                                bool is_current_month,
+                                bool block_past_days = false,
                                 GLib.DateTime month = new GLib.DateTime.now_local ()) {
         var day_number = 1;
 
@@ -82,24 +82,24 @@ public class Widgets.Calendar.CalendarView : Gtk.Box {
                 item.no_show_all = true;
             } else {
                 if (day_number < _current_day) {
-                    if (sensitive_past_days) {
+                    if (block_past_days) {
                         if (is_current_month) {
                             item.sensitive = false;
                         }
                     }
                 }
 
-                if (_current_day != -1 && (i+1) == _current_day + start_day ) {
+                if (_current_day != -1 && (i + 1) == _current_day + start_day ) {
                     if (is_current_month) {
                         item.get_style_context ().add_class ("calendar-today");
                     }
                 }
 
                 item.day = day_number;
-                day_number =  day_number + 1;
+                day_number = day_number + 1;
             }
 
-            if (sensitive_past_days) {
+            if (block_past_days) {
                 if (is_current_month == false) {
                     var now = new GLib.DateTime.now_local ();
                     if (month.compare (now) == -1) {

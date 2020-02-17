@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.NewSection : Gtk.Revealer {
     public int64 project_id { get; set; }
     public int is_todoist { get; set; }
@@ -11,8 +32,11 @@ public class Widgets.NewSection : Gtk.Revealer {
     public bool reveal {
         set {
             reveal_child = value;
+
             if (value) {
                 name_entry.grab_focus ();
+
+                grab_focus ();
             } else {
                 name_entry.text = "";
                 cancel_activated ();
@@ -100,7 +124,7 @@ public class Widgets.NewSection : Gtk.Revealer {
             return false;
         });
 
-        name_entry.changed.connect (() => {  
+        name_entry.changed.connect (() => {
             if (name_entry.text != "") {
                 submit_button.sensitive = true;
             } else {
@@ -135,11 +159,11 @@ public class Widgets.NewSection : Gtk.Revealer {
                 temp_id_mapping = 0;
                 print ("Add Section Error\n");
                 sensitive = true;
-                reveal = false; 
+                reveal = false;
             }
         });
     }
-    
+
     private void insert_section () {
         if (name_entry.text != "") {
             var section = new Objects.Section ();

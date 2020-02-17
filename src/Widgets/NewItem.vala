@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.NewItem : Gtk.ListBoxRow {
     public int64 project_id { get; set; }
     public int64 section_id { get; set; }
@@ -5,11 +26,11 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
     public int index { get; set; default = 0; }
     public bool has_index { get; set; default = false; }
     public string due { get; set; default = ""; }
-    
+
     public int64 temp_id_mapping {get; set; default = 0; }
 
     private uint timeout_id = 0;
-    
+
     private Gtk.Entry content_entry;
 
     public signal void new_item_hide ();
@@ -28,8 +49,6 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
         selectable = false;
         get_style_context ().add_class ("item-row");
         margin_end = 35;
-        margin_top = 3;
-        margin_bottom = 3;
 
         var loading_spinner = new Gtk.Spinner ();
         loading_spinner.start ();
@@ -49,18 +68,18 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
         content_entry.margin_start = 3;
         content_entry.margin_bottom = 1;
         content_entry.placeholder_text = _("Task name");
-        content_entry.get_style_context ().add_class ("welcome");
+        //content_entry.get_style_context ().add_class ("welcome");
         content_entry.get_style_context ().add_class ("flat");
         content_entry.get_style_context ().add_class ("new-entry");
         content_entry.get_style_context ().add_class ("no-padding-right");
         content_entry.get_style_context ().add_class ("label");
- 
+
         var content_grid = new Gtk.Grid ();
         content_grid.get_style_context ().add_class ("check-eventbox");
         content_grid.get_style_context ().add_class ("check-eventbox-border");
         content_grid.add (checked_button);
         content_grid.add (content_entry);
-        
+
         var grid = new Gtk.Grid ();
         grid.margin_start = 10;
         grid.column_spacing = 11;
@@ -96,6 +115,9 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
             content_entry.grab_focus ();
 
             Source.remove (timeout_id);
+            timeout_id = 0;
+
+            grab_focus ();
             return false;
         });
 
@@ -117,7 +139,7 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
             return false;
         });
 
-        content_entry.changed.connect (() => {  
+        content_entry.changed.connect (() => {
             if (content_entry.text != "") {
                 submit_button.sensitive = true;
             } else {
@@ -142,6 +164,10 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
 
         Planner.todoist.item_added_completed.connect ((id) => {
             if (temp_id_mapping == id) {
+                loading_revealer.reveal_child = false;
+                sensitive = true;
+                content_entry.text = "";
+
                 bool last = true;
                 if (has_index) {
                     last = false;
@@ -160,7 +186,7 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
                 } else {
                     new_item_hide ();
                 }
-                
+
                 due = "";
             }
         });
@@ -169,10 +195,11 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
             if (temp_id_mapping == id) {
                 loading_revealer.reveal_child = false;
                 sensitive = true;
+                content_entry.text = "";
             }
         });
     }
-    
+
     public void entry_grab_focus () {
         content_entry.grab_focus ();
     }
@@ -213,9 +240,9 @@ public class Widgets.NewItem : Gtk.ListBoxRow {
                     } else {
                         new_item_hide ();
                     }
-                    
+
                     due = "";
-                } 
+                }
             }
         }
     }

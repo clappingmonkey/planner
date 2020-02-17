@@ -1,9 +1,30 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.AreaRow : Gtk.ListBoxRow {
     public Objects.Area area { get; construct; }
 
     private Gtk.Button hidden_button;
-    //private Gtk.Label count_label;
-    private Gtk.Label name_label; 
+    private Gtk.Button submit_button;
+    private Gtk.Label name_label;
     private Gtk.Entry name_entry;
     private Gtk.Stack name_stack;
     private Gtk.EventBox top_eventbox;
@@ -11,16 +32,18 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
     private Gtk.Revealer listbox_revealer;
     private Gtk.Revealer motion_revealer;
     private Gtk.Revealer action_revealer;
+    public Gtk.Revealer main_revealer;
     private Gtk.Menu menu = null;
 
     private uint timeout;
 
-    private const Gtk.TargetEntry[] targetEntries = {
+    private const Gtk.TargetEntry[] TARGET_ENTRIES = {
         {"PROJECTROW", Gtk.TargetFlags.SAME_APP, 0}
     };
 
     public bool set_focus {
         set {
+            submit_button.sensitive = true;
             action_revealer.reveal_child = true;
             name_stack.visible_child_name = "name_entry";
             name_entry.grab_focus ();
@@ -49,6 +72,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         hidden_button.can_focus = false;
         hidden_button.halign = Gtk.Align.CENTER;
         hidden_button.valign = Gtk.Align.CENTER;
+        hidden_button.tooltip_text = _("Display Projects");
         hidden_button.get_style_context ().remove_class ("button");
         hidden_button.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
         hidden_button.get_style_context ().add_class ("hidden-button");
@@ -61,7 +85,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         stack.add_named (area_image, "area_image");
         stack.add_named (hidden_button, "hidden_button");
 
-        name_label =  new Gtk.Label (area.name);
+        name_label = new Gtk.Label (area.name);
         name_label.halign = Gtk.Align.START;
         name_label.get_style_context ().add_class ("pane-area");
         name_label.valign = Gtk.Align.CENTER;
@@ -75,8 +99,8 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         var info_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
         info_box.pack_start (name_label, false, false, 0);
         info_box.pack_start (count_label, false, true, 0);
- 
-        name_entry = new Gtk.Entry ();  
+
+        name_entry = new Gtk.Entry ();
         name_entry.placeholder_text = _("Task name");
         name_entry.get_style_context ().add_class ("flat");
         name_entry.get_style_context ().add_class ("pane-area");
@@ -92,6 +116,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
 
         if (area.collapsed == 1) {
             hidden_button.get_style_context ().add_class ("opened");
+            hidden_button.tooltip_text = _("Hiding Projects");
         }
 
         /*
@@ -102,25 +127,26 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         */
 
         var top_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 1);
-        top_box.margin_start = 6;
+        top_box.margin_start = 4;
         top_box.margin_top = 6;
         top_box.pack_start (stack, false, false, 0);
         top_box.pack_start (name_stack, false, true, 0);
         //top_box.pack_end (hidden_revealer, false, false, 0);
 
-        var submit_button = new Gtk.Button.with_label (_("Save"));
+        submit_button = new Gtk.Button.with_label (_("Save"));
         submit_button.sensitive = false;
         submit_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
         submit_button.get_style_context ().add_class ("new-item-action-button");
 
         var cancel_button = new Gtk.Button.with_label (_("Cancel"));
         cancel_button.get_style_context ().add_class ("new-item-action-button");
+        cancel_button.get_style_context ().add_class ("planner-button");
 
         var action_grid = new Gtk.Grid ();
         action_grid.halign = Gtk.Align.START;
         action_grid.column_homogeneous = true;
         action_grid.margin_top = 6;
-        action_grid.margin_start = 37;
+        action_grid.margin_start = 34;
         action_grid.column_spacing = 6;
         action_grid.add (cancel_button);
         action_grid.add (submit_button);
@@ -133,14 +159,14 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         top_eventbox = new Gtk.EventBox ();
         top_eventbox.add_events (Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK);
         top_eventbox.add (top_box);
- 
-        listbox = new Gtk.ListBox  ();
+
+        listbox = new Gtk.ListBox ();
         listbox.valign = Gtk.Align.START;
         listbox.get_style_context ().add_class ("pane");
         listbox.activate_on_single_click = true;
         listbox.selection_mode = Gtk.SelectionMode.SINGLE;
         listbox.hexpand = true;
- 
+
         listbox_revealer = new Gtk.Revealer ();
         listbox_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN;
         listbox_revealer.add (listbox);
@@ -149,13 +175,13 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         var separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
         separator.margin_start = 6;
         separator.margin_end = 6;
-        
+
         var motion_grid = new Gtk.Grid ();
         motion_grid.margin_start = 12;
         motion_grid.margin_end = 6;
         motion_grid.height_request = 24;
         motion_grid.get_style_context ().add_class ("grid-motion");
-            
+
         motion_revealer = new Gtk.Revealer ();
         motion_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN;
         motion_revealer.add (motion_grid);
@@ -167,7 +193,12 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         main_box.pack_start (motion_revealer, false, false, 0);
         main_box.pack_start (listbox_revealer, false, false, 0);
 
-        add (main_box);
+        main_revealer = new Gtk.Revealer ();
+        main_revealer.reveal_child = true;
+        main_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN;
+        main_revealer.add (main_box);
+
+        add (main_revealer);
         add_all_projects ();
         build_drag_and_drop ();
 
@@ -193,10 +224,12 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
                 submit_button.sensitive = false;
             }
         });
-        
+
         name_entry.key_release_event.connect ((key) => {
             if (key.keyval == 65307) {
-                save_area ();
+                action_revealer.reveal_child = false;
+                name_stack.visible_child_name = "name_label";
+                name_entry.text = area.name;
             }
 
             return false;
@@ -205,10 +238,11 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         submit_button.clicked.connect (() => {
             save_area ();
         });
-        
+
         cancel_button.clicked.connect (() => {
             action_revealer.reveal_child = false;
             name_stack.visible_child_name = "name_label";
+            name_entry.text = area.name;
         });
 
         top_eventbox.event.connect ((event) => {
@@ -216,11 +250,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
                 action_revealer.reveal_child = true;
                 name_stack.visible_child_name = "name_entry";
 
-                name_entry.grab_focus_without_selecting ();
-
-                if (name_entry.cursor_position < name_entry.text.length) {
-                    name_entry.move_cursor (Gtk.MovementStep.BUFFER_ENDS, 0, false);
-                }
+                name_entry.grab_focus ();
             }
 
             return false;
@@ -250,7 +280,6 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
             }
 
             stack.visible_child_name = "area_image";
-            
             return true;
         });
 
@@ -303,17 +332,19 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         if (listbox_revealer.reveal_child) {
             listbox_revealer.reveal_child = false;
             hidden_button.get_style_context ().remove_class ("opened");
+            hidden_button.tooltip_text = _("Display Projects");
             area.collapsed = 0;
         } else {
             listbox_revealer.reveal_child = true;
             hidden_button.get_style_context ().add_class ("opened");
+            hidden_button.tooltip_text = _("Hiding Projects");
             area.collapsed = 1;
         }
 
         save_area ();
     }
 
-    public void add_all_projects () {            
+    public void add_all_projects () {
         foreach (Objects.Project project in Planner.database.get_all_projects_by_area (area.id)) {
             if (project.inbox_project == 0) {
                 var row = new Widgets.ProjectRow (project);
@@ -328,7 +359,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
 
                         timeout = Timeout.add (125, () => {
                             listbox.select_row (row);
-    
+
                             Source.remove (timeout);
                             timeout = 0;
 
@@ -337,7 +368,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
                     }
                 }
             }
-            
+
         }
 
         listbox.show_all ();
@@ -355,47 +386,49 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
     }
 
     private void build_drag_and_drop () {
-        Gtk.drag_dest_set (listbox, Gtk.DestDefaults.ALL, targetEntries, Gdk.DragAction.MOVE);
+        Gtk.drag_dest_set (listbox, Gtk.DestDefaults.ALL, TARGET_ENTRIES, Gdk.DragAction.MOVE);
         listbox.drag_data_received.connect (on_drag_data_received);
 
-        Gtk.drag_dest_set (top_eventbox, Gtk.DestDefaults.ALL, targetEntries, Gdk.DragAction.MOVE);
+        Gtk.drag_dest_set (top_eventbox, Gtk.DestDefaults.ALL, TARGET_ENTRIES, Gdk.DragAction.MOVE);
         top_eventbox.drag_data_received.connect (on_drag_project_received);
         top_eventbox.drag_motion.connect (on_drag_motion);
         top_eventbox.drag_leave.connect (on_drag_leave);
     }
-    
-    private void on_drag_data_received (Gdk.DragContext context, int x, int y, Gtk.SelectionData selection_data, uint target_type, uint time) {
+
+    private void on_drag_data_received (Gdk.DragContext context, int x, int y,
+        Gtk.SelectionData selection_data, uint target_type, uint time) {
         Widgets.ProjectRow target;
         Widgets.ProjectRow source;
         Gtk.Allocation alloc;
 
         target = (Widgets.ProjectRow ) listbox.get_row_at_y (y);
         target.get_allocation (out alloc);
-        
+
         var row = ((Gtk.Widget[]) selection_data.get_data ())[0];
         source = (Widgets.ProjectRow ) row;
-        
+
         if (target != null) {
-            source.get_parent ().remove (source); 
+            source.get_parent ().remove (source);
 
             source.project.area_id = area.id;
 
             listbox.insert (source, target.get_index () + 1);
             listbox.show_all ();
 
-            update_project_order ();         
+            update_project_order ();
         }
     }
 
-    private void on_drag_project_received (Gdk.DragContext context, int x, int y, Gtk.SelectionData selection_data, uint target_type) {
+    private void on_drag_project_received (Gdk.DragContext context, int x, int y,
+        Gtk.SelectionData selection_data, uint target_type) {
         Widgets.ProjectRow source;
         var row = ((Gtk.Widget[]) selection_data.get_data ())[0];
         source = (Widgets.ProjectRow) row;
 
-        source.get_parent ().remove (source); 
+        source.get_parent ().remove (source);
         listbox.insert (source, 0);
         listbox.show_all ();
-    
+
         update_project_order ();
 
         listbox_revealer.reveal_child = true;
@@ -408,7 +441,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         motion_revealer.reveal_child = true;
         return true;
     }
-    
+
     public void on_drag_leave (Gdk.DragContext context, uint time) {
         motion_revealer.reveal_child = false;
     }
@@ -419,16 +452,16 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
                 listbox.foreach ((widget) => {
                     var row = (Gtk.ListBoxRow) widget;
                     int index = row.get_index ();
-        
+
                     var project = ((ProjectRow) row).project;
-        
+
                     new Thread<void*> ("update_project_order", () => {
                         Planner.database.update_project_item_order (project.id, area.id, index);
-        
+
                         return null;
                     });
                 });
-                
+
                 return null;
             });
 
@@ -451,25 +484,33 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
         menu = new Gtk.Menu ();
         menu.width_request = 200;
 
-        var edit_menu = new Widgets.ImageMenuItem (_("Edit area"), "edit-symbolic");
+        var add_menu = new Widgets.ImageMenuItem (_("Add project"), "list-add-symbolic");
+        var edit_menu = new Widgets.ImageMenuItem (_("Edit"), "edit-symbolic");
+        var delete_menu = new Widgets.ImageMenuItem (_("Delete"), "user-trash-symbolic");
+        delete_menu.item_image.get_style_context ().add_class ("label-danger");
 
-        var delete_menu = new Widgets.ImageMenuItem (_("Delete area"), "user-trash-symbolic");
-
+        menu.add (add_menu);
+        menu.add (new Gtk.SeparatorMenuItem ());
         menu.add (edit_menu);
+        menu.add (new Gtk.SeparatorMenuItem ());
         menu.add (delete_menu);
 
         menu.show_all ();
 
+        add_menu.activate.connect (() => {
+            Planner.utils.insert_project_to_area (area.id);
+        });
+
         edit_menu.activate.connect (() => {
             action_revealer.reveal_child = true;
             name_stack.visible_child_name = "name_entry";
-            
+
             name_entry.grab_focus_without_selecting ();
 
             if (name_entry.cursor_position < name_entry.text.length) {
                 name_entry.move_cursor (Gtk.MovementStep.BUFFER_ENDS, 0, false);
             }
-        }); 
+        });
 
         delete_menu.activate.connect (() => {
             var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
@@ -478,7 +519,7 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
                 "user-trash-full",
                 Gtk.ButtonsType.CLOSE
             );
-            
+
             Gtk.CheckButton custom_widget = null;
             if (Planner.database.projects_area_exists (area.id)) {
                 custom_widget = new Gtk.CheckButton.with_label (_("Delete projects"));
@@ -511,7 +552,12 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
             Planner.database.move_project (project, 0);
         }
 
-        destroy ();
+        main_revealer.reveal_child = false;
+
+        Timeout.add (500, () => {
+            destroy ();
+            return false;
+        });
     }
 
     private void delete_projects () {
@@ -522,6 +568,11 @@ public class Widgets.AreaRow : Gtk.ListBoxRow {
             }
         }
 
-        destroy ();
+        main_revealer.reveal_child = false;
+
+        Timeout.add (500, () => {
+            destroy ();
+            return false;
+        });
     }
 }

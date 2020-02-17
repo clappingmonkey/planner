@@ -4,7 +4,7 @@
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
 * License as published by the Free Software Foundation; either
-* version 2 of the License, or (at your option) any later version.
+* version 3 of the License, or (at your option) any later version.
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
 *
-* Authored by: Alain M. <alain23@protonmail.com>
+* Authored by: Alain M. <alainmh23@gmail.com>
 */
 
 public class Widgets.Calendar.Calendar : Gtk.Box {
@@ -24,7 +24,7 @@ public class Widgets.Calendar.Calendar : Gtk.Box {
     private Widgets.Calendar.CalendarWeek calendar_week;
     private Widgets.Calendar.CalendarView calendar_view;
 
-    public bool sensitive_past_days { get; construct; }
+    public bool block_past_days { get; construct; }
 
     private int month_nav;
     private int year_nav;
@@ -42,9 +42,9 @@ public class Widgets.Calendar.Calendar : Gtk.Box {
 
     public signal void selection_changed (GLib.DateTime date);
 
-    public Calendar (bool sensitive_past_days=false) {
+    public Calendar (bool block_past_days=false) {
         Object (
-            sensitive_past_days: sensitive_past_days
+            block_past_days: block_past_days
         );
     }
 
@@ -102,7 +102,7 @@ public class Widgets.Calendar.Calendar : Gtk.Box {
                                       max_days,
                                       date.get_day_of_month (),
                                       Planner.utils.is_current_month (date),
-                                      true,
+                                      block_past_days,
                                       date);
 
         calendar_header.date = date;
@@ -120,14 +120,14 @@ public class Widgets.Calendar.Calendar : Gtk.Box {
 
         var firts_week = new DateTime.local (date.get_year (), date.get_month (), 1, 0, 0, 0);
         int start_day = firts_week.get_day_of_week () - 1;
- 
+
         int max_days = Planner.utils.get_days_of_month (date.get_month (), year_nav);
 
         calendar_view.fill_grid_days (start_day,
                                       max_days,
                                       date.get_day_of_month (),
                                       Planner.utils.is_current_month (date),
-                                      true,
+                                      block_past_days,
                                       date);
 
         calendar_header.date = date;
@@ -148,15 +148,15 @@ public class Widgets.Calendar.Calendar : Gtk.Box {
         int max_days = Planner.utils.get_days_of_month (current_date.get_month (), year_nav);
 
         calendar_view.fill_grid_days (
-            start_day, 
-            max_days, 
-            day, 
-            true, 
-            true, 
+            start_day,
+            max_days,
+            day,
+            true,
+            block_past_days,
             current_date
         );
 
-        calendar_header.date = current_date; 
+        calendar_header.date = current_date;
 
         selection_changed (new GLib.DateTime.now_local ());
     }

@@ -1,3 +1,24 @@
+/*
+* Copyright © 2019 Alain M. (https://github.com/alainm23/planner)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+*
+* Authored by: Alain M. <alainmh23@gmail.com>
+*/
+
 public class Widgets.Toast : Gtk.Revealer {
     private Gtk.Stack main_stack;
 
@@ -65,7 +86,7 @@ public class Widgets.Toast : Gtk.Revealer {
         var undo_button = new Gtk.Button ();
         undo_button.valign = Gtk.Align.CENTER;
         undo_button.label = _("Undo");
-        
+
         var notification_box = new Gtk.Grid ();
         notification_box.column_spacing = 12;
         notification_box.add (close_button);
@@ -84,7 +105,6 @@ public class Widgets.Toast : Gtk.Revealer {
             }
 
             reveal_child = false;
-            
             Planner.database.clear_item_to_delete ();
         });
 
@@ -117,7 +137,7 @@ public class Widgets.Toast : Gtk.Revealer {
             Source.remove (timeout_id);
             timeout_id = 0;
         }
-         
+
         main_stack.visible_child_name = "delete_toast";
         delete_message_label.label = message;
         reveal_child = true;
